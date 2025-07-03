@@ -8,8 +8,7 @@ import 'paints/hole_painter.dart';
 import 'res/builders.dart';
 
 class SmartFaceCamera extends StatefulWidget {
-  /// Set false to hide all controls.
-  final bool showControls;
+  final Widget? placeholder;
 
   /// Set false to hide capture control icon.
   final bool showCaptureControl;
@@ -55,7 +54,7 @@ class SmartFaceCamera extends StatefulWidget {
 
   const SmartFaceCamera(
       {required this.controller,
-      this.showControls = true,
+      this.placeholder,
       this.showCaptureControl = true,
       this.showFlashControl = true,
       this.showCameraLensControl = true,
@@ -110,17 +109,15 @@ class _SmartFaceCameraState extends State<SmartFaceCamera>
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+    final size = MediaQuery.sizeOf(context);
     return ValueListenableBuilder<FaceCameraState>(
       valueListenable: widget.controller,
       builder: (BuildContext context, FaceCameraState value, Widget? child) {
         final CameraController? cameraController = value.cameraController;
-        return Stack(
-          alignment: Alignment.center,
-          children: [
-            if (cameraController != null &&
-                cameraController.value.isInitialized) ...[
-              Transform.scale(
+        if(cameraController?.value?.isInitialized != true){
+          return widget?.placeholder ?? SizedBox();
+        }
+        return Transform.scale(
                 scale: 1.0,
                 child: AspectRatio(
                   aspectRatio: size.aspectRatio,
@@ -173,44 +170,8 @@ class _SmartFaceCameraState extends State<SmartFaceCamera>
                     ),
                   ),
                 ),
-              )
-            ] else ...[
-              const Text('No Camera Detected',
-                  style: TextStyle(
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.w500,
-                  )),
-              CustomPaint(
-                size: size,
-                painter: HolePainter(),
-              )
-            ],
-            if (widget.showControls) ...[
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (widget.showFlashControl) ...[
-                        _flashControlWidget(value)
-                      ],
-                      if (widget.showCaptureControl) ...[
-                        const SizedBox(width: 15),
-                        _captureControlWidget(value),
-                        const SizedBox(width: 15)
-                      ],
-                      if (widget.showCameraLensControl) ...[
-                        _lensControlWidget()
-                      ],
-                    ],
-                  ),
-                ),
-              )
-            ]
-          ],
-        );
+              );
+        
       },
     );
   }
