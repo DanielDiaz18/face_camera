@@ -113,7 +113,7 @@ class _SmartFaceCameraState extends State<SmartFaceCamera>
     return ValueListenableBuilder<FaceCameraState>(
       valueListenable: widget.controller,
       builder: (BuildContext context, FaceCameraState value, Widget? child) {
-        final CameraController? cameraController = value.cameraController;
+        final cameraController = value.cameraController;
         if(cameraController?.value?.isInitialized != true){
           return widget?.placeholder ?? SizedBox();
         }
@@ -127,7 +127,7 @@ class _SmartFaceCameraState extends State<SmartFaceCamera>
                       fit: BoxFit.fitHeight,
                       child: SizedBox(
                         width: size.width,
-                        height: size.width * cameraController.value.aspectRatio,
+                        height: size.width * cameraController!.value.aspectRatio,
                         child: Stack(
                           fit: StackFit.expand,
                           children: <Widget>[
